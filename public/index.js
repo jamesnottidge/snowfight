@@ -16,9 +16,11 @@ socket.on("connect", () => {
 });
 
 
+const SNOWBALL_SIZE = 5;
 
 let map = [[]];
 let players = [];
+let snowballs = [];
 
 
 socket.on("map", (loadedMap) => { 
@@ -28,6 +30,10 @@ socket.on("map", (loadedMap) => {
 
 socket.on("players", (serverPlayers) => {
     players = serverPlayers; 
+});
+
+socket.on("snowballs", (serverSnowballs) => {
+    snowballs = serverSnowballs;
 });
 
 const inputs = {
@@ -74,9 +80,9 @@ window.addEventListener("keyup", (event) => {
 });
 
 
-window.addEventListener('click', (event) => {
-    const angle = Math.atan2
-    socket.emit("snowball", {x, y});
+window.addEventListener('click', (e) => {
+    const angle = Math.atan2(e.clientY - canvasEl.height / 2, e.clientX - canvasEl.width / 2);
+    socket.emit("snowball", angle);
 });
 
 const TILE_SIZE = 16;
@@ -121,6 +127,12 @@ function loop () {
         canvas.drawImage(cartmanImage, player.x - cx, player.y - cy, 16, 16); 
     }
 
+    for (const snowball of snowballs) {
+        canvas.fillStyle = "white";
+        canvas.beginPath();
+        canvas.arc(snowball.x - cx, snowball.y - cy, SNOWBALL_SIZE, 0, Math.PI * 2);
+        canvas.fill();
+    }
 
     window.requestAnimationFrame(loop);
 }
