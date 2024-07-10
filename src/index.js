@@ -7,6 +7,8 @@ const { Server } = require("socket.io");
 const app = express();
 const httpServer = createServer(app);
 
+const PORT = process.env.PORT || 5000;
+
 const io = new Server(httpServer);
 const loadMap = require("./mapLoader");
 
@@ -158,7 +160,7 @@ async function main() {
 
   app.use(express.static("public"));
 
-  httpServer.listen(5000);
+  httpServer.listen(PORT); 
   let lastUpdate = Date.now();
   setInterval(() => {
     const now = Date.now();
