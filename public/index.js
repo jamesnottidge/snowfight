@@ -1,5 +1,7 @@
 const mapImage = new Image();
 mapImage.src = "./tileset_basic_terrain.png";
+const cartmanImage = new Image();
+cartmanImage.src = "./cartman-image.webp";
 
 const canvasEl = document.getElementById("canvas");
 canvasEl.width = window.innerWidth;
@@ -16,9 +18,59 @@ socket.on("connect", () => {
 
 
 let map = [[]];
+let players = [];
+
+
 socket.on("map", (loadedMap) => { 
     console.log(map);
     map = loadedMap;
+});
+
+socket.on("players", (serverPlayers) => {
+    players = serverPlayers; 
+});
+
+const inputs = {
+    up: false,
+    down: false,
+    left: false,
+    right: false
+};
+
+
+window.addEventListener("keydown", (event) => {
+
+    if (event.key === "ArrowUp" || event.key === "w") {
+        inputs.up = true;
+    }
+    if (event.key === "ArrowDown" || event.key === "s") {
+        inputs.down = true;
+    }
+    if (event.key === "ArrowLeft" || event.key === "a") {
+        inputs.left = true;
+    }
+    if (event.key === "ArrowRight"  || event.key === "d") {
+        inputs.right = true;
+    }
+    socket.emit("inputs", inputs);
+
+});
+
+window.addEventListener("keyup", (event) => {
+    if (event.key === "ArrowUp"  || event.key === "w") {
+        inputs.up = false;
+    }
+    if (event.key === "ArrowDown" || event.key === "s") {
+        inputs.down = false;
+    }
+    if (event.key === "ArrowLeft" || event.key === "a") {
+        inputs.left = false;
+    }
+    if (event.key === "ArrowRight" || event.key === "d") {
+        inputs.right = false;
+    }
+    socket.emit("inputs", inputs);
+
 });
 
 
@@ -49,6 +101,12 @@ function loop () {
             );
         };
     }
+
+    for (const player of players) {
+        canvas.drawImage(cartmanImage, player.x, player.y, 16, 16);
+    }
+
+
     window.requestAnimationFrame(loop);
 }
 
