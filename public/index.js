@@ -74,6 +74,11 @@ window.addEventListener("keyup", (event) => {
 });
 
 
+window.addEventListener('click', (event) => {
+    const angle = Math.atan2
+    socket.emit("snowball", {x, y});
+});
+
 const TILE_SIZE = 16;
 const TILES_IN_ROW = 12;
 
@@ -81,6 +86,16 @@ const TILES_IN_ROW = 12;
 
 function loop () {
     canvas.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+    const myPlayer = players.find(player => player.id === socket.id);
+
+    let cx = 0;
+    let cy = 0;
+
+    if (myPlayer) {
+    cx = parseInt(myPlayer.x - canvasEl.width /2);
+    cy = parseInt(myPlayer.y - canvasEl.height /2);
+    }
     for(let row = 0; row < map.length; row++) {
         for (let col = 0; col < map[row].length; col++) {
             const tile = map[row][col];
@@ -94,8 +109,8 @@ function loop () {
                 imageRow * TILE_SIZE,
                 TILE_SIZE,
                 TILE_SIZE,
-                x,
-                y,
+                x - cx,
+                y -  cy,
                 TILE_SIZE,
                 TILE_SIZE
             );
@@ -103,7 +118,7 @@ function loop () {
     }
 
     for (const player of players) {
-        canvas.drawImage(cartmanImage, player.x, player.y, 16, 16);
+        canvas.drawImage(cartmanImage, player.x - cx, player.y - cy, 16, 16); 
     }
 
 
